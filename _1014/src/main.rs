@@ -28,7 +28,7 @@ fn factorization(n: i64) -> Vec<i64>{
 		aux = n.checked_div(2).unwrap();
 	}
 
-	for i in (3..aux).step_by(2){
+	for i in (3..=aux).step_by(2){
 
 		if is_prime(i) && aux % i ==  0{
 			ret.push(i);
@@ -38,10 +38,20 @@ fn factorization(n: i64) -> Vec<i64>{
 
 	ret
 
-} 
+}
+
+fn  minimal_product_digit(factors: Vec<i64>) -> i64{
+
+	if factors.iter().any(|x| ((*x as f64).log10()	as i64) > 0){
+		return -1;
+	}
+
+	factors.iter().fold(0, |acc, elem| acc * 10 + elem)
+
+}
 
 fn main() {
 
-	println!("{:?}",factorization(510510) );
+	println!("{:?}",minimal_product_digit(factorization(20)));
 
 }
