@@ -1,57 +1,64 @@
-fn is_prime(n: i64) -> bool{
+use std::io;
+use std::io::BufReader;
+use std::io::BufRead;
+fn minimal_product_digit(n: i64) -> i64{
 
-	if n == 2 { return true};
-	if n % 2 == 0 {return false};
+	let f : Vec<i64> = vec![2,3,5,7];
 
-	let s = (n as f64).sqrt().ceil();
-
-	let lim = s as i64;
-
-	for i in (3..=lim).step_by(2){
-
-
-
-		if n % i == 0 { return false};
-
-	}
-	true
-}
-
-fn factorization(n: i64) -> Vec<i64>{
-
-	let mut aux : i64 = n;
-
+	let mut aux = n;
 	let mut ret : Vec<i64> = Vec::new();
+	let mut count = 0;
 
-	if n% 2 ==0{
-		ret.push(2);
-		aux = n.checked_div(2).unwrap();
-	}
+	for i in f{
 
-	for i in (3..=aux).step_by(2){
+		if  aux % i== 0 {
 
-		if is_prime(i) && aux % i ==  0{
-			ret.push(i);
+			loop{
+
+				aux/=i;
+				count +=1;
+				match ret.last_mut(){
+
+					None => ret.push(i),
+	
+					Some(last) if count > 1=>{
+						let valor = *last;
+						if (valor * valor) < 10{ 
+							*last = valor*valor
+						}
+						else{
+							ret.push(i);
+						}
+					}
+					Some(_last) => ret.push(i)
+				}
+				if aux % i != 0 {
+					count = 0;
+					break;
+				}
+			}
 		}
-
 	}
 
-	ret
-
-}
-
-fn  minimal_product_digit(factors: Vec<i64>) -> i64{
-
-	if factors.iter().any(|x| ((*x as f64).log10()	as i64) > 0){
-		return -1;
+	if ret.is_empty(){
+		-1
 	}
-
-	factors.iter().fold(0, |acc, elem| acc * 10 + elem)
+	else{
+		ret.sort();
+		ret.iter().fold(0, |acc, elem| acc * 10 + elem)
+	}
 
 }
 
 fn main() {
 
-	println!("{:?}",minimal_product_digit(factorization(20)));
+	let mut line = String::new();
+	let mut stdin = BufReader::new(io::stdin());
+
+  stdin.read_line(&mut line).unwrap(); 
+
+	let lim = line.trim().parse::<i64>().unwrap();
+
+	println!("{:?}",minimal_product_digit(lim));
 
 }
