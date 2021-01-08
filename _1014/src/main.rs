@@ -4,77 +4,32 @@ use std::io::BufRead;
 fn minimal_product_digit(n: i64) -> i64{
 	if n == 0 {return 10};
 	if n < 10 { return n};
-	
-	let f : Vec<i64> = vec![2,3,5,7];
+
+	let mut f : Vec<i64> = (2..=9).collect();
 	let mut aux = n;
-	let mut ret : Vec<i64> = Vec::new();
+
+	f.reverse();
+
+	let mut ret : Vec<i64> = Vec::new();	
+
 	for i in f{
 
-		if  aux % i== 0 {
-
+		if aux % i == 0 {
 			loop{
 				aux/=i;
-				 ret.push(i);
-				if aux % i != 0 {
-					break;
-				}
+				ret.push(i);
+				if aux % i != 0 {break;}
 			}
 		}
 	};
 
-	if ret.is_empty() || aux > 1 {
-		return -1;
-	}
-	
-	match ret.iter().fold(0,|acc,elem| if *elem == 3{acc + 1} else {acc}) {
+	if aux > 1 || ret.is_empty(){
+		return -1
+	};
 
-		1 => {
+	ret.reverse();
+	ret.iter().fold(0, |acc, elem| acc * 10 + elem)
 
-			let index = ret .iter().position(|&x| x == 3).unwrap();
-
-			if index > 0{
-
-				ret.remove(index);
-
-				let k = ret.get_mut(index - 1).unwrap();
-
-				*k = 6;
-
-				ret.sort();
-				
-			}
-		}
-
-		_ => ()
-
-	}
-	let mut v : Vec<i64> = Vec::new();	
-	for i in ret{
-
-		match i {
-
-			2 | 3=> 
-
-				match v.last_mut(){
-
-					None => v.push(i),
-					Some(last) if i ==3 && *last == 2 => v.push(i),
-					Some(last) => {
-						let valor = *last;
-						if (valor * i) < 10{ 
-							*last = valor*i
-						}
-						else{
-							v.push(i);
-						}
-					}
-				}
-			_ => v.push(i)
-		}
-	}
-
-		v.sort();
-		v.iter().fold(0, |acc, elem| acc * 10 + elem)
 
 }
 
